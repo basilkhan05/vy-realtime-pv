@@ -121,3 +121,7 @@ body {
 #cover.video-loading h1 {
     display: none;
 }
+
+.hide {
+    display: none
+}
