@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf8">
-    <title>Vidyard Realtime Personalization Form Example</title>
+    <title>Vidyard Realtime Personalization Query String Example</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="../main.css">
 </head>
@@ -11,19 +11,12 @@
     <div class="cover-container d-flex h-100 p-3 mx-auto flex-column text-center">
       <header class="masthead mb-auto">
         <div class="inner">
-          <h3 class="text-center">Vidyard Realtime Personalization Form Example</h3>
+          <h3 class="text-center">Vidyard Realtime Personalization Query String Example</h3>
         </div>
       </header>
 
       <main id="cover" role="main" class="inner cover">
-        <h1 class="cover-heading">Get your Personalized Video</h1>
-        <form id="personalization-form">
-          <div class="form-group">
-            <label for="name">Enter your name:</label>
-            <input type="name" class="form-control required" id="name" required placeholder="John Smith">
-          </div>
-          <button type="submit" id="create" class="btn btn btn-lg btn-secondary">Submit</button>
-        </form>
+        <h1 id="query-prompt">Please enter the <code>name</code> query string in the URL</h1>
         <div class="progress hide">
           <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100" style="width: 95%"></div>
         </div>
@@ -39,10 +32,19 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
     <script type="text/javascript">
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, '\\$&');
+            var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        }
         $(function () {
-            $('#personalization-form').on('submit', function (e) {
-                e.preventDefault();
-                $(this).hide();
+            const nameParam = getParameterByName('name');
+            if (nameParam) {
+                $('#query-prompt').hide();
                 $('.progress').removeClass('hide')
                 $.ajax({
                     url: "https://blender.vidyard.com/forms/BRoceUkhk1ZpPhViXo9WMP/submit",
@@ -53,7 +55,7 @@
                     },
                     data: JSON.stringify({
                         fields: {
-                            'first-name': e.currentTarget[0].value,
+                            'first-name': nameParam,
                         },
                     }),
                     success: function(response) {
@@ -67,7 +69,8 @@
                         $('#cover').html('<h2>An Error Occurred... Please try again later</h2>');
                     }
                 });
-            })
+            }
+    
         })
     </script>
 </body>
